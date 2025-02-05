@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FAQ Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>FAQ Chatbot</h1>
+    <div class="chat-container" id="chat-container">
+        <div class="bot-message">Hello! Ask me anything about our FAQs.</div>
+    </div>
+    <form onsubmit="sendMessage(event)">
+        <input type="text" id="user-input" placeholder="Type your question...">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        function appendMessage(message, isUser) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'user-message' : 'bot-message';
+            messageDiv.textContent = message;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('user-input');
+            const question = userInput.value.trim();
+            
+            if (question) {
+                appendMessage(question, true);
+                userInput.value = '';
+                
+                try {
+                    const response = await fetch('/ask', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `user_input=${encodeURIComponent(question)}`
+                    });
+                    
+                    const data = await response.json();
+                    appendMessage(data.response, false);
+                } catch (error) {
+                    appendMessage('Error connecting to the server', false);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
