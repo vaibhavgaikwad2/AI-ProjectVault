@@ -51,7 +51,7 @@ FAQS = [
     }
 ]
 
-client = Groq(api_key=os.environ.get("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"))
+client = Groq(api_key=os.environ.get("API KEY "))
 
 def get_chat_response(user_input):
     try:
