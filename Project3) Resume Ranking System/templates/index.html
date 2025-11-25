@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Resume Ranker</title>
+    <style>
+        :root {
+            --primary: #6875ff;
+            --secondary: #2e96d2;
+            --accent: #2fa5ef;
+            --light: #6875ff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .upload-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--accent);
+            border-radius: 5px;
+            margin: 1rem 0;
+            resize: vertical;
+        }
+
+        .custom-file-upload {
+            display: block;
+            padding: 1.5rem;
+            border: 2px dashed var(--accent);
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background: var(--accent);
+        }
+
+        #file-list {
+            margin: 1rem 0;
+            color: var(--secondary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .results-table th, 
+        .results-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .results-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .error {
+            color: #dc3545;
+            padding: 1rem;
+            background: #ffe6e6;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Resume Ranker</h1>
+        <p>Automated Resume Screening System</p>
+    </div>
+
+    <div class="container">
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="upload-box">
+            <h2>Job Description</h2>
+            <textarea name="job_desc" rows="6" placeholder="Paste job description here..."></textarea>
+            
+            <h2>Upload Resumes</h2>
+            <label class="custom-file-upload">
+                <input type="file" name="resumes" multiple accept=".pdf" hidden 
+                       onchange="updateFileList(this)">
+                Click to Upload PDF Files
+            </label>
+            <div id="file-list"></div>
+
+            <button type="submit">Analyze Resumes</button>
+        </form>
+
+        {% if results %}
+        <h2>Ranking Results</h2>
+        <div class="results">
+            {{ results|safe }}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function updateFileList(input) {
+            const fileList = document.getElementById('file-list');
+            let files = Array.from(input.files).map(f => f.name);
+            fileList.innerHTML = files.join('<br>');
+        }
+    </script>
+</body>
+</html>
